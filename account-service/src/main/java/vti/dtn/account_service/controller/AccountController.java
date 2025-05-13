@@ -1,6 +1,7 @@
 package vti.dtn.account_service.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,9 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
+    @Value("${greeting.text}")
+    private String greetingText;
+
     @GetMapping
     public List<Account> getListAccounts() {
         List<AccountEntity> accountEntities = accountService.getListAccounts();
@@ -27,6 +31,11 @@ public class AccountController {
                         accountEntity.getFirstName(),
                         accountEntity.getLastName()))
                 .toList();
+    }
+
+    @GetMapping("/greeting")
+    public String greet() {
+        return greetingText;
     }
 
 }
