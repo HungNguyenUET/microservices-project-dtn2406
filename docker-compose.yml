@@ -109,6 +109,20 @@ services:
       SPRING_DATASOURCE_PASSWORD: 123abc
       SPRING_APPLICATION_NAME: account-service
 
+  admin-service:
+    build:
+      context: ./admin-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - account-service
+      - department-service
+    networks:
+      - spring-microservice
+
 networks:
   spring-microservice:
     driver: bridge

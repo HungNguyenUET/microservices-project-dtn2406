@@ -8,6 +8,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import vti.dtn.admin_service.dto.AccountDTO;
+import vti.dtn.admin_service.dto.DepartmentDTO;
+import vti.dtn.admin_service.feignclient.DepartmentFeignClient;
 
 import java.util.List;
 
@@ -18,14 +20,18 @@ public class AdminService {
     @Value("${account-service.url}")
     private String accountUrl;
 
-    @Autowired
-    private RestClient restClient;
+    private final RestClient restClient;
+    private final DepartmentFeignClient departmentFeignClient;
 
     public List<AccountDTO> getAccounts() {
         return restClient.get()
                 .uri(accountUrl)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
+    }
+
+    public List<DepartmentDTO> getDepartments() {
+        return departmentFeignClient.getAllDepartments();
     }
 
 }
