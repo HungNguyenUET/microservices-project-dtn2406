@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(name = "email", length = 50, nullable = true)
     private String email;
 
-    @Column(name = "password", length = 150, unique = true)
+    @Column(name = "password", length = 150, nullable = true)
     private String password;
 
     @Column(name = "access_token", length = 150, nullable = true)

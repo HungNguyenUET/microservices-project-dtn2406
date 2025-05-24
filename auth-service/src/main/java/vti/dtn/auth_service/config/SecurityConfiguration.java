@@ -7,7 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import vti.dtn.auth_service.entity.Role;
+import vti.dtn.auth_service.filter.JwtFilter;
 import vti.dtn.auth_service.oauth2.handler.OAuth2AuthenticationFailureHandler;
 import vti.dtn.auth_service.oauth2.handler.OAuth2AuthenticationSuccessHandler;
 import vti.dtn.auth_service.oauth2.repository.HttpCookieOAuthorizationRequestRepository;
@@ -19,14 +21,15 @@ public class SecurityConfiguration {
     private static final String[] WHITE_LIST_URL = {
             "/oauth2/redirect",
             "/oauth2/authorize",
-            "/oauth2/authorise",
             "/oauth2/authorize/github",
             "/oauth2/callback/github",
+            "/oauth2/redirect",
             "/api/v1/auth/login",
             "/api/v1/auth/register",
             "/api/v1/auth/refresh-token"
     };
 
+    private final JwtFilter jwtFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final HttpCookieOAuthorizationRequestRepository httpCookieOAuthorizationRequestRepository;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -43,9 +46,10 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
                 .authorizationEndpoint()
-                .baseUri("/oauth2/authorise")
+                .baseUri("/oauth2/authorize")
                 .authorizationRequestRepository(httpCookieOAuthorizationRequestRepository)
                 .and()
                 .redirectionEndpoint()
